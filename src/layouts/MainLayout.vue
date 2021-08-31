@@ -1,43 +1,22 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
+  <q-layout view="lHh Lpr lff">
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-grey-1"
+      class="bg-primary"
+      :mini="miniState"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+      :width="250"
+      :breakpoint="500"
     >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
+      <q-list class="q-py-md">
+        <!-- <q-item-label header class="text-white">Smart Parking lot</q-item-label> -->
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <PagesLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+        <q-space />
+        <q-item-label class="absolute-bottom q-pl-sm text-grey-3">0.0.1</q-item-label>
       </q-list>
     </q-drawer>
 
@@ -48,72 +27,74 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
+import PagesLink from "components/PagesLink.vue";
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: "Dashboard",
+    icon: "dashboard",
+    link: "/"
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: "Estadisticas",
+    icon: "analytics",
+    link: "/stats"
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: "Historial",
+    icon: "history",
+    link: "/history"
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: "Cámaras",
+    icon: "videocam",
+    link: "/camera"
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
+    title: "Configuración",
+    icon: "settings",
+    link: "/configuration"
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
+    title: "Sistema",
+    icon: "info",
+    link: "/system"
   },
   {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    title: "Gestión de cuentas",
+    icon: "manage_accounts",
+    link: "/management-account"
+  },
+  {
+    title: "Empleados",
+    icon: "people",
+    link: "/employees"
   }
 ];
 
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: 'MainLayout',
+  name: "MainLayout",
 
   components: {
-    EssentialLink
+    PagesLink
   },
 
-  setup () {
-    const leftDrawerOpen = ref(false)
-
+  setup() {
+    const leftDrawerOpen = ref(false);
     return {
+      miniState: ref(true),
       essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
+      leftDrawerOpen: ref(false),
+      toggleLeftDrawer() {
+        leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+      
+      onLogoutClick() {
+        console.log("cerrando sesion");
       }
-    }
+    };
   }
-})
+});
 </script>

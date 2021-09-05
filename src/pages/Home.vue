@@ -29,17 +29,15 @@ import { defineComponent } from "vue";
 import TablePlates from "src/components/TablePlates.vue";
 import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
-import { useSocketIo, useSocketName } from "src/service/socket.js";
+import { useSocketIo, useSocketConnection } from "src/service/socket.js";
+import { getPrices } from "src/utils/http-handler";
 
 export default defineComponent({
   name: "Home",
   components: { TablePlates, SearchBar, PlacesCounter },
-  // components: { SearchBar },
   data() {
     return {
-      wsConnection: null,
-      wsConnected: false,
-      wsEndpoint: "wss://0.0.0.0:5000/active_plates_update",
+      wsNotification: false,
       parkPlaces: {
         free: 10,
         busy: 11
@@ -49,51 +47,20 @@ export default defineComponent({
       emptyTable: false
     };
   },
-  setup() {
-    const socket = useSocketIo(5000);
-    const [displayName, setDisplayName] = useSocketName(socket);
-  },
-  // created() {
-  //   console.log("creating");
-  //   console.log("Trying to open a WebSocket connection...");
-  //   // this.wsConnection = new WebSocket("ws://localhost:81");
-  //   this.wsConnection = new WebSocket(this.wsEndpoint);
-  //   this.wsConnection.onopen = function (event) {
-  //     console.log("Connection opened");
-  //     this.wsConnected = true;
-  //   };
-  //   this.wsConnection.onclose = function (event) {
-  //     console.log("Connection closed");
-  //     this.wsConnected = false;
-  //   };
-  //   this.wsConnection.onmessage = function (event) {
-  //     console.log("message", event);
-  //   }; // <-- add this line
-  // },
 
   mounted() {
+    const socket = useSocketIo(5000);
+    useSocketConnection(socket, this.newMessage);
     this.filteredUsers = Object.values(this.users);
   },
 
   methods: {
-    // onOpen(event) {
-    //   console.log("Connection opened");
-    //   this.wsConnected = true;
-    // },
-    // onClose(event) {
-    //   console.log("Connection closed");
-    //   this.wsConnected = false;
-    //   setTimeout(this.initWebSocket, 2000);
-    // },
-    // onMessage(event) {
-    //   console.log("message", event);
-    // },
-    sendMessage(message) {
-      console.log("sending: ", message);
-      this.wsConnection.send(message);
+    async newMessage() {
+      console.log("llego algo a los methods");
+      let data = await getPrices();
+      console.log(data);
     },
     newEntry() {
-      this.sendMessage("test");
       console.log("nuevo ingreso");
     },
     filterUsers(result) {

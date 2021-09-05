@@ -13,7 +13,9 @@
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
     "quasar": "^2.0.0",
+    "socket.io-client": "^4.2.0",
     "vue-3-socket.io": "^1.0.4",
+    "vue-socket.io": "^3.0.10",
     "vuex": "^4.0.1"
   },
   "devDependencies": {

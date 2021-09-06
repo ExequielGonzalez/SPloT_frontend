@@ -11,10 +11,11 @@
       ref="searchBarRef"
     />
     <TablePlates
-      :users="this.filteredUsers.length!==0?this.filteredUsers:this.emptyTable?[]:Object.values(this.users)"
+      :plates="JSON.parse(JSON.stringify(this.activePlates)).length!==0?JSON.parse(JSON.stringify(this.activePlates)):[]"
       @delete-user="deleteUser"
     />
   </q-page>
+  <!-- :plates="this.filteredUsers.length!==0?this.filteredUsers:this.emptyTable?[]:Object.values(this.users)" -->
   <!-- <q-layout view="lHh Lpr lFf"> -->
 
   <!-- </q-layout> -->
@@ -22,7 +23,7 @@
 
 <script>
 import { defineComponent } from "vue";
-
+import { markRaw, toRaw } from "vue";
 // import { mapActions } from "vuex";
 // import * as Constants from "src/constants";
 
@@ -30,7 +31,7 @@ import TablePlates from "src/components/TablePlates.vue";
 import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
 import { useSocketIo, useSocketConnection } from "src/service/socket.js";
-import { getPrices } from "src/utils/http-handler";
+import { getActivePlates, getOccupationDetails } from "src/utils/http-handler";
 
 export default defineComponent({
   name: "Home",
@@ -40,25 +41,29 @@ export default defineComponent({
       wsNotification: false,
       parkPlaces: {
         free: 10,
-        busy: 11
+        busy: 15
       },
       users: {},
+      activePlates: [],
       filteredUsers: [],
       emptyTable: false
     };
   },
-
   mounted() {
     const socket = useSocketIo(5000);
     useSocketConnection(socket, this.newMessage);
     this.filteredUsers = Object.values(this.users);
   },
-
   methods: {
     async newMessage() {
       console.log("llego algo a los methods");
-      let data = await getPrices();
-      console.log(data);
+      let plates = await getActivePlates();
+      this.activePlates = plates;
+      console.log(JSON.parse(JSON.stringify(this.activePlates)));
+      let occupation = await getOccupationDetails();
+      console.log(occupation);
+      this.parkPlaces.free = occupation.free;
+      this.parkPlaces.busy = occupation.busy;
     },
     newEntry() {
       console.log("nuevo ingreso");

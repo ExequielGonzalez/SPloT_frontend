@@ -9,3 +9,11 @@ async function fetchAsync(url) {
 export async function getPrices() {
   return await fetchAsync(`${url}/api/v1/costs/1`);
 }
+
+export async function getActivePlates() {
+  return await fetchAsync(`${url}/api/v1/actives`);
+}
+
+export async function getOccupationDetails() {
+  return await fetchAsync(`${url}/api/v1/reports/countPlaces`);
+}

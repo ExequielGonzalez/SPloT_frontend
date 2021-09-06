@@ -4,8 +4,8 @@
       :dense="$q.screen.lt.md"
       title="Plates"
       :columns="columns"
-      :data="users"
-      row-key="id"
+      :rows="plates"
+      row-key="plateNumber"
       :rows-per-page-options="[15]"
       :visible-columns="visibleColumns"
     >
@@ -36,7 +36,7 @@
       <template v-slot:body-cell-actions="props">
         <q-td key="actions" :props="props">
           <!-- edit button -->
-          <q-btn flat @click="editRecord(props.row.id)" icon="visibility" color="primary">
+          <q-btn flat @click="editRecord(props.row.plateNumber)" icon="visibility" color="primary">
             <q-tooltip
               content-style="font-size: 14px"
               transition-show="scale"
@@ -51,7 +51,7 @@
           <!-- edit button -->
 
           <!-- delete button -->
-          <q-btn flat @click="deleteRecord(props.row.id)" icon="delete" color="negative">
+          <q-btn flat @click="deleteRecord(props.row.plateNumber)" icon="delete" color="negative">
             <q-tooltip
               content-style="font-size: 14px"
               transition-show="scale"
@@ -75,45 +75,46 @@
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
-    users: Array
+    plates: Array
   },
   data() {
     return {
-      visibleColumns: ["name", "last-name", "email", "actions"],
+      visibleColumns: ["type", "plateNumber", "entryTime", "cost", "actions"],
       columns: [
         {
-          name: "name",
+          name: "type",
           //   required: true,
           label: "Tipo",
-          field: (row) => row.firstName,
-          format: (val) => `${val}`,
+          field: (row) => row.type,
+          format: (val) =>
+            val === "car" ? "Auto" : val === "van" ? "Camioneta" : "Moto", //to capitalize
           sortable: true,
           align: "left"
         },
         {
-          name: "last-name",
+          name: "plateNumber",
           //   required: true,
           label: "Patente",
-          field: (row) => row.lastName,
+          field: (row) => row.plateNumber,
           format: (val) => `${val}`,
           sortable: true,
           align: "left"
         },
         {
-          name: "email",
-          required: true,
+          name: "entryTime",
+          // required: true,
           label: "Horario de ingreso",
-          field: (row) => row.email,
-          format: (val) => `${val}`,
+          field: (row) => row.entryTime,
+          format: (val) => new Date(val).toLocaleString(),
           sortable: true,
           align: "left"
         },
         {
-          name: "email",
-          required: true,
+          name: "cost",
+          // required: true,
           label: "Monto actual",
-          field: (row) => row.email,
-          format: (val) => `${val}`,
+          field: (row) => row.cost,
+          format: (val) => `$${val}`,
           sortable: true,
           align: "left"
         },
@@ -125,6 +126,9 @@ export default defineComponent({
         }
       ]
     };
+  },
+  mounted() {
+    console.log(this.plates);
   },
   methods: {
     editRecord(id) {

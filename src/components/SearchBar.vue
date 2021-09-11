@@ -6,7 +6,7 @@
         outlined
         dense
         v-model="searchText"
-        @input="onSearchTextChange"
+        @update:model-value="onSearchTextChange"
       >
         <template v-slot:append>
           <q-icon name="search" />
@@ -20,40 +20,39 @@
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
-    users: Array
+    plates: Array
   },
   data() {
     return {
-      usersFiltered: [],
+      platesFiltered: [],
       searchText: ""
     };
   },
   methods: {
     onSearchTextChange() {
-      console.log(this.users);
+      console.log(this.plates);
       if (this.searchText && this.searchText !== "") {
-        this.usersFiltered = this.users.filter(
-          (user) =>
-            user.email
+        this.platesFiltered = this.plates.filter(
+          (plate) =>
+            plate.plateNumber
               .toString()
               .toLowerCase()
               .includes(this.searchText.toLowerCase()) ||
-            user.firstName
-              .toString()
-              .toLowerCase()
-              .includes(this.searchText.toLowerCase()) ||
-            user.lastName
+            plate.type
               .toString()
               .toLowerCase()
               .includes(this.searchText.toLowerCase())
         );
       } else {
-        this.usersFiltered = this.users;
+        this.platesFiltered = this.plates;
       }
-      console.log(this.usersFiltered);
-      this.$emit("result", this.usersFiltered);
-      if (this.usersFiltered.length === 0) {
-        this.$emit("search-error", this.usersFiltered);
+      console.log(JSON.parse(JSON.stringify(this.platesFiltered)));
+      this.$emit("result", JSON.parse(JSON.stringify(this.platesFiltered)));
+      if (this.platesFiltered.length === 0) {
+        this.$emit(
+          "search-error",
+          JSON.parse(JSON.stringify(this.platesFiltered))
+        );
       }
     },
     cleanSearchBar() {

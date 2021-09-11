@@ -17,3 +17,19 @@ export async function getActivePlates() {
 export async function getOccupationDetails() {
   return await fetchAsync(`${url}/api/v1/reports/countPlaces`);
 }
+
+export async function getPhotoByPlateNumber(plateNumber) {
+  const vehicle = await fetchAsync(`${url}/api/v1/vehicles/${plateNumber}`);
+  // console.log(vehicle);
+  const entry = await fetchAsync(
+    `${url}/api/v1/entries/?vehicleId=${vehicle.id}`
+  );
+  // console.log(entry[0]);
+  const vehiclePhoto = await fetchAsync(
+    `${url}/api/v1/vehiclePhotos?entryId=${entry[0].id}`
+  );
+  // console.log(vehiclePhoto);
+  return await fetchAsync(
+    `${url}/api/v1/vehiclePhotos/photo/${vehiclePhoto[0].id}`
+  );
+}

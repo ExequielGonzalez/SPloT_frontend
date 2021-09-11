@@ -5,76 +5,95 @@
       <q-btn color="primary" icon="check" label="Añadir Ingreso" @click="newEntry" />
     </section>
     <SearchBar
-      @result="filterUsers"
+      @result="filterPlates"
       @search-error="showEmptyTable"
-      :users="Object.values(this.users)"
+      :plates="JSON.parse(JSON.stringify(this.activePlates))"
       ref="searchBarRef"
     />
     <TablePlates
-      :plates="JSON.parse(JSON.stringify(this.activePlates)).length!==0?JSON.parse(JSON.stringify(this.activePlates)):[]"
+      :plates="JSON.parse(JSON.stringify(this.filteredPlates)).length!==0?JSON.parse(JSON.stringify(this.filteredPlates)):this.emptyTable?[]:JSON.parse(JSON.stringify(this.activePlates))"
+      @view-photo="showPhoto"
       @delete-user="deleteUser"
     />
   </q-page>
-  <!-- :plates="this.filteredUsers.length!==0?this.filteredUsers:this.emptyTable?[]:Object.values(this.users)" -->
+  <image-viewer ref="imageViewerRef" />
+  <!-- :plates="this.filteredPlates.length!==0?this.filteredPlates:this.emptyTable?[]:Object.values(this.plates)" -->
   <!-- <q-layout view="lHh Lpr lFf"> -->
 
   <!-- </q-layout> -->
 </template>
 
-<script>
+<script >
 import { defineComponent } from "vue";
-import { markRaw, toRaw } from "vue";
 // import { mapActions } from "vuex";
 // import * as Constants from "src/constants";
 
 import TablePlates from "src/components/TablePlates.vue";
 import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
+import ImageViewer from "src/components/ImageViewer.vue";
 import { useSocketIo, useSocketConnection } from "src/service/socket.js";
-import { getActivePlates, getOccupationDetails } from "src/utils/http-handler";
+import {
+  getActivePlates,
+  getOccupationDetails,
+  getPhotoByPlateNumber
+} from "src/utils/http-handler";
 
 export default defineComponent({
   name: "Home",
-  components: { TablePlates, SearchBar, PlacesCounter },
+  components: { TablePlates, SearchBar, PlacesCounter, ImageViewer },
   data() {
     return {
       wsNotification: false,
       parkPlaces: {
-        free: 10,
-        busy: 15
+        total: 0,
+        free: 0,
+        busy: 0
       },
-      users: {},
+      plates: {},
       activePlates: [],
-      filteredUsers: [],
+      filteredPlates: [],
       emptyTable: false
     };
   },
   mounted() {
     const socket = useSocketIo(5000);
     useSocketConnection(socket, this.newMessage);
-    this.filteredUsers = Object.values(this.users);
+    this.filteredPlates = Object.values(this.plates);
+    this.newMessage();
   },
   methods: {
     async newMessage() {
-      console.log("llego algo a los methods");
+      // console.log("llego algo a los methods");
       let plates = await getActivePlates();
       this.activePlates = plates;
       console.log(JSON.parse(JSON.stringify(this.activePlates)));
       let occupation = await getOccupationDetails();
-      console.log(occupation);
-      this.parkPlaces.free = occupation.free;
-      this.parkPlaces.busy = occupation.busy;
+      // console.log(occupation);
+      this.parkPlaces = occupation;
     },
     newEntry() {
       console.log("nuevo ingreso");
     },
-    filterUsers(result) {
+    filterPlates(result) {
       this.emptyTable = false;
-      this.filteredUsers = result;
+      console.log(result);
+      this.filteredPlates = JSON.parse(JSON.stringify(result));
+      console.log(
+        JSON.parse(JSON.stringify(this.filteredPlates)),
+        JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
+      );
     },
     showEmptyTable() {
       this.emptyTable = true;
     },
+    async showPhoto(plateNumber) {
+      console.log(plateNumber);
+      const photo = await getPhotoByPlateNumber(plateNumber);
+      // this.$refs.imageViewerRef.setImage(photo);
+      this.$refs.imageViewerRef.showModal(photo);
+    },
+
     async deleteUser(id) {
       this.$q
         .dialog({
@@ -93,7 +112,7 @@ export default defineComponent({
         .onOk(async () => {
           const response = await this.removeUser(id);
           if (response) {
-            this.filteredUsers = Object.values(this.users);
+            this.filteredPlates = Object.values(this.plates);
             this.showEmptyTable();
             this.$refs.searchBarRef.cleanSearchBar();
             this.$q.notify({

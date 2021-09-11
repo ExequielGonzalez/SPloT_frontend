@@ -6,7 +6,7 @@ export function useSocketIo(port) {
 
 export function useSocketConnection(socket, callback) {
   socket.on("active_plates_update", () => {
-    console.log("llego algo por ws");
+    // console.log("llego algo por ws");
     callback();
   });
 }

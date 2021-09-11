@@ -96,7 +96,7 @@ export default defineComponent({
           //   required: true,
           label: "Patente",
           field: (row) => row.plateNumber,
-          format: (val) => `${val}`,
+          format: (val) => `${val.replace("_", "")}`,
           sortable: true,
           align: "left"
         },
@@ -127,12 +127,10 @@ export default defineComponent({
       ]
     };
   },
-  mounted() {
-    console.log(this.plates);
-  },
   methods: {
-    editRecord(id) {
-      this.$router.push({ name: "edit_user", params: { id: id } });
+    editRecord(plateNumber) {
+      this.$emit("view-photo", plateNumber);
+      // this.$router.push({ name: "edit_user", params: { id: id } });
     },
     async deleteRecord(id) {
       this.$emit("delete-user", id);

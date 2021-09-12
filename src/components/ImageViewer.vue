@@ -60,6 +60,7 @@ export default {
 <style lang="scss" scoped>
 .imageViewer {
   width: 50%;
+  min-width: 300px;
   > img {
     width: 100%;
   }

@@ -1,22 +1,9 @@
 <template>
   <q-page class="q-pa-md">
-    <section class="home-header q-pa-lg">
-      <PlacesCounter :places="parkPlaces" />
-      <!-- <q-btn color="primary" icon="check" label="Añadir Ingreso" @click="newEntry" /> -->
-    </section>
-    <SearchBar
-      @result="filterPlates"
-      @search-error="showEmptyTable"
-      :plates="JSON.parse(JSON.stringify(this.activePlates))"
-      ref="searchBarRef"
-    />
-    <TablePlates
-      :plates="JSON.parse(JSON.stringify(this.filteredPlates)).length!==0?JSON.parse(JSON.stringify(this.filteredPlates)):this.emptyTable?[]:JSON.parse(JSON.stringify(this.activePlates))"
-      @view-photo="showPhoto"
-      @delete-user="deleteEntry"
-    />
+    <!-- <section class="home-header q-pa-lg"></section> -->
+    <bar-graph />
   </q-page>
-  <image-viewer ref="imageViewerRef" />
+
   <!-- :plates="this.filteredPlates.length!==0?this.filteredPlates:this.emptyTable?[]:Object.values(this.plates)" -->
   <!-- <q-layout view="lHh Lpr lFf"> -->
 
@@ -29,10 +16,11 @@ import { defineComponent } from "vue";
 // import * as Constants from "src/constants";
 import { useQuasar } from "quasar";
 
-import TablePlates from "src/components/TablePlates.vue";
-import SearchBar from "src/components/SearchBar.vue";
-import PlacesCounter from "src/components/PlacesCounter.vue";
-import ImageViewer from "src/components/ImageViewer.vue";
+
+import BarGraph from "src/components/BarGraph.vue";
+// import SearchBar from "src/components/SearchBar.vue";
+// import PlacesCounter from "src/components/PlacesCounter.vue";
+// import ImageViewer from "src/components/ImageViewer.vue";
 import {
   useSocketIo,
   webSocketNewEntry,
@@ -46,8 +34,8 @@ import {
 } from "src/utils/http-handler";
 
 export default defineComponent({
-  name: "Home",
-  components: { TablePlates, SearchBar, PlacesCounter, ImageViewer },
+  name: "Stats",
+  components: { BarGraph },
 
   setup() {
     const $q = useQuasar();
@@ -91,13 +79,12 @@ export default defineComponent({
       console.log("nuevo ingreso");
     },
     handleAlarms(alert) {
-      const color = { Info: "info", Warning: "warning", Error: "negative" };
       alert = JSON.parse(alert);
       console.log("new Alarm: ", alert);
       this.$q.notify({
         message: alert.title,
         caption: alert.description,
-        color: color[alert.type]
+        color: "negative"
       });
     },
     filterPlates(result) {

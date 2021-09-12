@@ -33,6 +33,7 @@ export async function getPhotoByPlateNumber(plateNumber) {
   );
   if (vehiclePhoto.status !== 200) return vehiclePhoto;
   // console.log(vehiclePhoto);
+
   return await fetchAsync(
     `${url}/api/v1/vehiclePhotos/photo/${vehiclePhoto.data[0].id}`
   );

@@ -33,7 +33,11 @@ import TablePlates from "src/components/TablePlates.vue";
 import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
 import ImageViewer from "src/components/ImageViewer.vue";
-import { useSocketIo, useSocketConnection } from "src/service/socket.js";
+import {
+  useSocketIo,
+  webSocketNewEntry,
+  webSocketAlarms
+} from "src/service/socket.js";
 import {
   getActivePlates,
   getOccupationDetails,
@@ -64,7 +68,8 @@ export default defineComponent({
   },
   mounted() {
     const socket = useSocketIo(5000);
-    useSocketConnection(socket, this.newMessage);
+    webSocketNewEntry(socket, this.newMessage);
+    webSocketAlarms(socket, this.handleAlarms);
     this.filteredPlates = Object.values(this.plates);
     this.newMessage();
   },
@@ -76,7 +81,7 @@ export default defineComponent({
       response = await getActivePlates();
       if (response.status === 200) plates = response.data;
       this.activePlates = plates;
-      console.log(JSON.parse(JSON.stringify(this.activePlates)));
+      // console.log(JSON.parse(JSON.stringify(this.activePlates)));
       response = await getOccupationDetails();
       if (response.status === 200) occupation = response.data;
       // console.log(occupation);
@@ -84,6 +89,15 @@ export default defineComponent({
     },
     newEntry() {
       console.log("nuevo ingreso");
+    },
+    handleAlarms(alert) {
+      alert = JSON.parse(alert);
+      console.log("new Alarm: ", alert);
+      this.$q.notify({
+        message: alert.title,
+        caption: alert.description,
+        color: "negative"
+      });
     },
     filterPlates(result) {
       this.emptyTable = false;
@@ -124,6 +138,7 @@ export default defineComponent({
           if (response.status === 200) {
             this.$refs.searchBarRef.cleanSearchBar();
             await this.newMessage();
+            this.filteredPlates = [];
             this.$q.notify({
               progress: true,
               message: "Se eliminó el ingreso correctamente",
@@ -136,62 +151,7 @@ export default defineComponent({
               color: "negative"
             });
           }
-          // this.$refs.searchBarRef.cleanSearchBar();
-          // const response = await this.removeUser(id);
-          // if (response) {
-          //   this.filteredPlates = Object.values(this.plates);
-          //   this.showEmptyTable();
-          //   this.$refs.searchBarRef.cleanSearchBar();
-          //   this.$q.notify({
-          //     progress: true,
-          //     message: "Se eliminó el usuario correctamente",
-          //     color: "accent"
-          //   });
-          // } else {
-          //   this.$q.notify({
-          //     progress: true,
-          //     message: "No se ha podido eliminar el usuario seleccionado",
-          //     color: "negative"
-          //   });
-          // }
         });
-    },
-
-    async deleteUser(id) {
-      this.$q
-        .dialog({
-          title: "Eliminar usuario",
-          message: `¿Esta seguro que desea eliminar este usuario?`,
-          ok: {
-            push: true,
-            color: "negative",
-            label: "eliminar"
-          },
-          cancel: {
-            push: true,
-            color: "secondary"
-          }
-        })
-        .onOk(async () => {
-          const response = await this.removeUser(id);
-          if (response) {
-            this.filteredPlates = Object.values(this.plates);
-            this.showEmptyTable();
-            this.$refs.searchBarRef.cleanSearchBar();
-            this.$q.notify({
-              progress: true,
-              message: "Se eliminó el usuario correctamente",
-              color: "accent"
-            });
-          } else {
-            this.$q.notify({
-              progress: true,
-              message: "No se ha podido eliminar el usuario seleccionado",
-              color: "negative"
-            });
-          }
-        })
-        .onCancel(async () => {});
     }
   }
 });

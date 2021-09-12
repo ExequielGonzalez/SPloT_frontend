@@ -1,4 +1,4 @@
-const url = "http://localhost:5000";
+const url = "http://0.0.0.0:5000";
 
 async function fetchAsync(url, verb = "GET") {
   let data = {};

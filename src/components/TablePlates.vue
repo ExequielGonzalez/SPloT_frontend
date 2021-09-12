@@ -5,31 +5,17 @@
       title="Plates"
       :columns="columns"
       :rows="plates"
-      row-key="plateNumber"
+      row-key="entryId"
       :rows-per-page-options="[15]"
-      :visible-columns="visibleColumns"
     >
       <!-- visible columns -->
       <template v-slot:top>
-        <h6>Lista de patentes activas</h6>
-        <q-space />
+        <div class="table__top">
+          <h6>Patentes activas</h6>
+          <!-- <q-space /> -->
 
-        <q-select
-          v-model="visibleColumns"
-          multiple
-          outlined
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="name"
-          options-cover
-          style="min-width: 150px"
-          color="primary"
-          standout="bg-primary text-black"
-        />
+          <q-btn color="primary" label="Añadir ingreso" @click="addEntry" />
+        </div>
       </template>
       <!-- visible columns -->
       <!-- actions buttons -->
@@ -51,7 +37,7 @@
           <!-- edit button -->
 
           <!-- delete button -->
-          <q-btn flat @click="deleteRecord(props.row.plateNumber)" icon="delete" color="negative">
+          <q-btn flat @click="deleteRecord(props.row.entryId)" icon="delete" color="negative">
             <q-tooltip
               content-style="font-size: 14px"
               transition-show="scale"
@@ -79,7 +65,6 @@ export default defineComponent({
   },
   data() {
     return {
-      visibleColumns: ["type", "plateNumber", "entryTime", "cost", "actions"],
       columns: [
         {
           name: "type",
@@ -134,10 +119,19 @@ export default defineComponent({
     },
     async deleteRecord(id) {
       this.$emit("delete-user", id);
+    },
+    addEntry() {
+      this.$emit("add-entry");
     }
   }
 });
 </script>
 
-<style>
+<style lang="scss" scoped>
+.table__top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 </style>

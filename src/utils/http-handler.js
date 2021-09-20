@@ -1,4 +1,4 @@
-const url = "http://0.0.0.0:5000";
+const url = "http://localhost:5000";
 
 async function fetchAsync(url, verb = "GET") {
   let data = {};
@@ -41,4 +41,15 @@ export async function getPhotoByPlateNumber(plateNumber) {
 
 export async function deleteEntry(id) {
   return await fetchAsync(`${url}/api/v1/entries/${id}`, "DELETE");
+}
+
+//stats Page
+
+export async function getMoneyEarnByPeriod(
+  since = 1630805031,
+  until = 1631669031
+) {
+  return await fetchAsync(
+    `${url}/api/v1/reports/collected?since=${since}&until=${until}`
+  );
 }

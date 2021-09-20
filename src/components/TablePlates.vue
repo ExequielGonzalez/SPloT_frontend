@@ -17,6 +17,14 @@
           <q-btn color="primary" label="Añadir ingreso" @click="addEntry" />
         </div>
       </template>
+      <template v-slot:body-cell="props">
+        <q-td :props="props" class="table__items">
+          <span>{{props.value}}</span>
+        </q-td>
+        <!-- <q-td :props="props" key="cost" class="table__items-price">
+          <span>{{props.value.}}</span>
+        </q-td>-->
+      </template>
       <!-- visible columns -->
       <!-- actions buttons -->
       <template v-slot:body-cell-actions="props">
@@ -129,9 +137,21 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .table__top {
+  height: 70px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.table__items {
+  font-size: 1.4rem;
+
+  @media (max-width: 800px) {
+    font-size: 1.1rem;
+  }
+
+  &-price {
+    color: red;
+  }
 }
 </style>

@@ -53,3 +53,21 @@ export async function getMoneyEarnByPeriod(
     `${url}/api/v1/reports/collected?since=${since}&until=${until}`
   );
 }
+
+export async function getOccupationByPeriod(
+  since = 1630805031,
+  until = 1631669031
+) {
+  return await fetchAsync(
+    `${url}/api/v1/reports/occupation?since=${since}&until=${until}`
+  );
+}
+
+export async function getPaymentMethodsByPeriod(
+  since = 1630805031,
+  until = 1631669031
+) {
+  return await fetchAsync(
+    `${url}/api/v1/reports/paymentMethods?since=${since}&until=${until}`
+  );
+}

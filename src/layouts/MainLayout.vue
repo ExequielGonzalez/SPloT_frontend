@@ -59,17 +59,17 @@ const linksList = [
     title: "Sistema",
     icon: "info",
     link: "/system"
-  },
-  {
-    title: "Gestión de cuentas",
-    icon: "manage_accounts",
-    link: "/management-account"
-  },
-  {
-    title: "Empleados",
-    icon: "people",
-    link: "/employees"
   }
+  // {
+  //   title: "Gestión de cuentas",
+  //   icon: "manage_accounts",
+  //   link: "/management-account"
+  // },
+  // {
+  //   title: "Empleados",
+  //   icon: "people",
+  //   link: "/employees"
+  // }
 ];
 
 import { defineComponent, ref } from "vue";

@@ -1,13 +1,13 @@
 <template>
   <div class="counter">
-    <p class="counter__title">Lugares del establecimiento</p>
+    <p class="counter__title">{{title}}</p>
     <div class="counter__container-free">
       <p>LIBRES</p>
-      <p>{{places.free}}</p>
+      <p>{{places.free === null?0:places.free}}</p>
     </div>
     <div class="counter__container-busy">
       <p>OCUPADOS</p>
-      <p>{{places.busy}}</p>
+      <p>{{places.busy === null?0:places.busy}}</p>
     </div>
   </div>
 </template>
@@ -16,6 +16,7 @@
 import { defineComponent } from "vue";
 export default defineComponent({
   props: {
+    title: String,
     places: {
       busy: Number,
       free: Number

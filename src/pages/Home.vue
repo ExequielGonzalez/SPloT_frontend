@@ -1,7 +1,8 @@
 <template>
   <q-page class="q-pa-md">
     <section class="home-header q-pa-lg">
-      <PlacesCounter :places="parkPlaces" />
+      <PlacesCounter title="Lugares generales" :places="parkPlaces" />
+      <PlacesCounter title="Lugares motos" :places="motorbikePlaces" />
       <!-- <q-btn color="primary" icon="check" label="Añadir Ingreso" @click="newEntry" /> -->
     </section>
     <SearchBar
@@ -60,6 +61,11 @@ export default defineComponent({
         free: 0,
         busy: 0
       },
+      motorbikePlaces: {
+        total: 0,
+        free: 0,
+        busy: 0
+      },
       plates: {},
       activePlates: [],
       filteredPlates: [],
@@ -84,8 +90,9 @@ export default defineComponent({
       // console.log(JSON.parse(JSON.stringify(this.activePlates)));
       response = await getOccupationDetails();
       if (response.status === 200) occupation = response.data;
-      // console.log(occupation);
-      this.parkPlaces = occupation;
+      console.log(occupation);
+      this.parkPlaces = occupation.carsAndVans;
+      this.motorbikePlaces = occupation.motorbikes;
     },
     newEntry() {
       console.log("nuevo ingreso");

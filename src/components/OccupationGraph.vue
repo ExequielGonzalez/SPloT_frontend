@@ -1,13 +1,13 @@
 <template>
   <div>
-    <apexchart height="350" type="bar" :options="chartOptions" :series="series"></apexchart>
+    <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
   </div>
 </template>
 
 <script>
 import VueApexCharts from "vue3-apexcharts";
 export default {
-  name: "BarGraph",
+  name: "OccupationGraph",
   components: {
     apexchart: VueApexCharts
   },
@@ -16,19 +16,28 @@ export default {
     return {
       series: [
         {
-          name: "Recaudación",
+          name: "Autos",
+          data: []
+        },
+        {
+          name: "Motos",
+          data: []
+        },
+        {
+          name: "Camionetas",
           data: []
         }
       ],
       chartOptions: {
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          stacked: true,
+          stackType: "100%"
         },
         plotOptions: {
           bar: {
-            horizontal: false,
-            columnWidth: "55%",
+            horizontal: true,
             endingShape: "rounded"
           }
         },
@@ -36,19 +45,24 @@ export default {
           enabled: false
         },
         stroke: {
-          show: true,
+          //   show: true,
           width: 2,
           colors: ["transparent"]
         },
         title: {
-          text: "Recaudación"
+          text: "Ocupación"
         },
         xaxis: {
-          categories: []
+          categories: [], 
+          labels: {
+                formatter: function (val) {
+                  return val + "%"
+                }
+          }
         },
         yaxis: {
           title: {
-            text: "Ingresos"
+            text: undefined
           }
         },
         fill: {
@@ -57,18 +71,32 @@ export default {
         tooltip: {
           y: {
             formatter: function (val) {
-              return "$ " + val + " pesos";
+              return val;
             }
           }
+        },
+        legend: {
+          position: "top",
+          horizontalAlign: "left",
+          offsetX: 40
         }
       }
     };
   },
   methods: {
-    updateChart(days, values) {
+    updateChart(days, cars, motorbikes, vans) {
       this.series = [
         {
-          data: values
+          name: "Autos",
+          data: cars
+        },
+        {
+          name: "Motos",
+          data: motorbikes
+        },
+        {
+          name: "Camionetas",
+          data: vans
         }
       ];
       this.chartOptions = {

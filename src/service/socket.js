@@ -17,3 +17,11 @@ export function webSocketAlarms(socket, callback) {
     callback(msg);
   });
 }
+
+export function webSocketPayment(socket, callback) {
+  socket.on("register_payment", (msg) => {
+    // console.log("llego algo por ws");
+    console.log(msg);
+    callback(msg);
+  });
+}

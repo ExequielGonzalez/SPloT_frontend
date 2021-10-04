@@ -15,7 +15,7 @@ export default {
     const imageComponent = ref(null);
     onMounted(() => {
       // the DOM element will be assigned to the ref after initial render
-      console.log(imageComponent.value); // this is your $el
+      // console.log(imageComponent.value); // this is your $el
     });
     return {
       card,

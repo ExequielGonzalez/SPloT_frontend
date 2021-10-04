@@ -30,7 +30,7 @@ export default defineComponent({
   },
   methods: {
     onSearchTextChange() {
-      console.log(this.plates);
+      // console.log(this.plates);
       if (this.searchText && this.searchText !== "") {
         this.platesFiltered = this.plates.filter(
           (plate) =>
@@ -46,7 +46,7 @@ export default defineComponent({
       } else {
         this.platesFiltered = this.plates;
       }
-      console.log(JSON.parse(JSON.stringify(this.platesFiltered)));
+      // console.log(JSON.parse(JSON.stringify(this.platesFiltered)));
       this.$emit("result", JSON.parse(JSON.stringify(this.platesFiltered)));
       if (this.platesFiltered.length === 0) {
         this.$emit(

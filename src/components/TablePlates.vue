@@ -30,7 +30,12 @@
       <template v-slot:body-cell-actions="props">
         <q-td key="actions" :props="props">
           <!-- edit button -->
-          <q-btn flat @click="editRecord(props.row.plateNumber)" icon="visibility" color="primary">
+          <q-btn
+            flat
+            @click="showPhoto(props.row)"
+            icon="visibility"
+            :color="props.row.hasPhoto? 'primary': 'grey'"
+          >
             <q-tooltip
               content-style="font-size: 14px"
               transition-show="scale"
@@ -39,7 +44,8 @@
               self="bottom middle"
               :offset="[10, 10]"
             >
-              <strong>Ver más</strong>
+              <strong v-if="props.row.hasPhoto">Ver más</strong>
+              <strong v-if="!props.row.hasPhoto">No disponible</strong>
             </q-tooltip>
           </q-btn>
           <!-- edit button -->
@@ -121,9 +127,8 @@ export default defineComponent({
     };
   },
   methods: {
-    editRecord(plateNumber) {
-      this.$emit("view-photo", plateNumber);
-      // this.$router.push({ name: "edit_user", params: { id: id } });
+    showPhoto(vehicle) {
+      if (vehicle.hasPhoto) this.$emit("view-photo", vehicle.plateNumber);
     },
     async deleteRecord(id) {
       this.$emit("delete-user", id);

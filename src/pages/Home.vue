@@ -16,6 +16,7 @@
       @view-photo="showPhoto"
       @delete-user="deleteEntry"
     />
+    <NotificationOut @manage-payment="managePayment" ref="notificationOutRef" />
   </q-page>
   <image-viewer ref="imageViewerRef" />
   <!-- :plates="this.filteredPlates.length!==0?this.filteredPlates:this.emptyTable?[]:Object.values(this.plates)" -->
@@ -34,10 +35,13 @@ import TablePlates from "src/components/TablePlates.vue";
 import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
 import ImageViewer from "src/components/ImageViewer.vue";
+import NotificationOut from "src/components/NotificationOut.vue";
+
 import {
   useSocketIo,
   webSocketNewEntry,
-  webSocketAlarms
+  webSocketAlarms,
+  webSocketPayment
 } from "src/service/socket.js";
 import {
   getActivePlates,
@@ -48,7 +52,13 @@ import {
 
 export default defineComponent({
   name: "Home",
-  components: { TablePlates, SearchBar, PlacesCounter, ImageViewer },
+  components: {
+    TablePlates,
+    SearchBar,
+    PlacesCounter,
+    ImageViewer,
+    NotificationOut
+  },
 
   setup() {
     const $q = useQuasar();
@@ -76,6 +86,7 @@ export default defineComponent({
     const socket = useSocketIo(5000);
     webSocketNewEntry(socket, this.newMessage);
     webSocketAlarms(socket, this.handleAlarms);
+    webSocketPayment(socket, this.handlePaymentRequest);
     this.filteredPlates = Object.values(this.plates);
     this.newMessage();
   },
@@ -90,7 +101,7 @@ export default defineComponent({
       // console.log(JSON.parse(JSON.stringify(this.activePlates)));
       response = await getOccupationDetails();
       if (response.status === 200) occupation = response.data;
-      console.log(occupation);
+      // console.log(occupation);
       this.parkPlaces = occupation.carsAndVans;
       this.motorbikePlaces = occupation.motorbikes;
     },
@@ -109,12 +120,12 @@ export default defineComponent({
     },
     filterPlates(result) {
       this.emptyTable = false;
-      console.log(result);
+      // console.log(result);
       this.filteredPlates = JSON.parse(JSON.stringify(result));
-      console.log(
-        JSON.parse(JSON.stringify(this.filteredPlates)),
-        JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
-      );
+      // console.log(
+      //   JSON.parse(JSON.stringify(this.filteredPlates)),
+      //   JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
+      // );
     },
     showEmptyTable() {
       this.emptyTable = true;
@@ -160,6 +171,19 @@ export default defineComponent({
             });
           }
         });
+    },
+    async handlePaymentRequest(entryModified) {
+      entryModified = JSON.parse(entryModified);
+      console.log("This is a new payment request: ", entryModified);
+      const entryReady = this.activePlates.filter(
+        (t) => t.entryId == entryModified.entryId
+      );
+
+      this.$refs.notificationOutRef.showNotif(entryReady);
+    },
+
+    async managePayment(entryModified) {
+      console.log("ahora si va el popup", entryModified);
     }
   }
 });

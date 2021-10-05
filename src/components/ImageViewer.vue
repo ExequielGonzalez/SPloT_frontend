@@ -35,10 +35,7 @@ export default {
     hideModal() {
       this.card = false;
     },
-    setImage(data) {
-      this.imageData = data;
-      console.log(this.imageData);
-    },
+
     showPhoto(data) {
       setTimeout(() => {
         console.log(data);

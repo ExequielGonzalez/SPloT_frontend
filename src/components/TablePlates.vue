@@ -134,7 +134,7 @@ export default defineComponent({
       this.$emit("delete-user", id);
     },
     addEntry() {
-      this.$emit("add-entry");
+      this.$emit("add-manual-entry");
     }
   }
 });

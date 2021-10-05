@@ -19,6 +19,7 @@ export default defineComponent({
           timeout: 0,
           icon: "info",
           group: false,
+          position: "bottom-right",
           actions: [
             {
               label: "Cobrar",

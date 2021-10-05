@@ -14,11 +14,13 @@
     <TablePlates
       :plates="JSON.parse(JSON.stringify(this.filteredPlates)).length!==0?JSON.parse(JSON.stringify(this.filteredPlates)):this.emptyTable?[]:JSON.parse(JSON.stringify(this.activePlates))"
       @view-photo="showPhoto"
+      @add-manual-entry="addManualEntry"
       @delete-user="deleteEntry"
     />
     <NotificationOut @manage-payment="managePayment" ref="notificationOutRef" />
   </q-page>
   <image-viewer ref="imageViewerRef" />
+  <PaymentDialog ref="paymentDialogRef" @payment-realized="paymentRealized" />
   <!-- :plates="this.filteredPlates.length!==0?this.filteredPlates:this.emptyTable?[]:Object.values(this.plates)" -->
   <!-- <q-layout view="lHh Lpr lFf"> -->
 
@@ -36,6 +38,7 @@ import SearchBar from "src/components/SearchBar.vue";
 import PlacesCounter from "src/components/PlacesCounter.vue";
 import ImageViewer from "src/components/ImageViewer.vue";
 import NotificationOut from "src/components/NotificationOut.vue";
+import PaymentDialog from "src/components/PaymentDialog.vue";
 
 import {
   useSocketIo,
@@ -57,7 +60,8 @@ export default defineComponent({
     SearchBar,
     PlacesCounter,
     ImageViewer,
-    NotificationOut
+    NotificationOut,
+    PaymentDialog
   },
 
   setup() {
@@ -183,7 +187,22 @@ export default defineComponent({
     },
 
     async managePayment(entryModified) {
+      entryModified = entryModified[0];
       console.log("ahora si va el popup", entryModified);
+      let photo = "";
+      if (entryModified.hasPhoto) {
+        console.log("tiene foto");
+        let response = await getPhotoByPlateNumber(entryModified.plateNumber);
+        if (response.status === 200) photo = response.data;
+      }
+      this.$refs.paymentDialogRef.showDialog(photo, entryModified);
+    },
+    async paymentRealized(data) {
+      console.log("time to save the payment: ", data);
+    },
+    async addManualEntry() {
+      let photo = "";
+      this.$refs.paymentDialogRef.showDialog(photo);
     }
   }
 });

@@ -102,6 +102,7 @@ export default defineComponent({
         console.log("realizando pago");
         const result = {
           ...this.vehicleData,
+          cost: this.cost,
           computePayment: false,
           exitTime: new Date().getTime(),
           method:

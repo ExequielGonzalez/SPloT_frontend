@@ -50,7 +50,11 @@ import {
   getActivePlates,
   getOccupationDetails,
   getPhotoByPlateNumber,
-  deleteEntry
+  deleteEntry,
+  editEntry,
+  addPayment,
+  getTrafficLightData,
+  turnOnTrafficLight
 } from "src/utils/http-handler";
 
 export default defineComponent({
@@ -199,10 +203,30 @@ export default defineComponent({
     },
     async paymentRealized(data) {
       console.log("time to save the payment: ", data);
+      let response = await editEntry(data.entryId, {
+        exitTime: data.exitTime,
+        computePayment: false
+      });
+      if (response.status === 200) {
+        console.log("entry edited succesfully: ", response);
+        let paymentCreated = await addPayment({
+          amount: data.cost,
+          method: data.method,
+          entryId: data.entryId
+        });
+
+        console.log("payment created succesfully: ", paymentCreated);
+        //TODO: turn on traffic light
+        // console.log(response, response.exitPassagewayId);
+        const trafficLightData = await getTrafficLightData(
+          response.data.exitPassagewayId
+        );
+        // console.log(trafficLightData.data[0].id);
+        turnOnTrafficLight(trafficLightData.data[0].id);
+      }
     },
     async addManualEntry() {
-      let photo = "";
-      this.$refs.paymentDialogRef.showDialog(photo);
+      turnOnTrafficLight("1");
     }
   }
 });

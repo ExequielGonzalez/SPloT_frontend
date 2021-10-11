@@ -1,8 +1,33 @@
 const url = "http://localhost:5000";
+const url_mqtt_api = "http://localhost:3001";
 
 async function fetchAsync(url, verb = "GET") {
   let data = {};
   let response = await fetch(url, { method: `${verb}` });
+  if (response.status === 200) data = await response.json();
+  return { status: response.status, data: data };
+}
+
+async function fetchAsyncPost(url, verb = "POST", data) {
+  let response = await fetch(url, {
+    method: `${verb}`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (response.status === 200) data = await response.json();
+  return { status: response.status, data: data };
+}
+
+async function fetchMqttPost(topic, data) {
+  let response = await fetch(`${url_mqtt_api}/api/mqtt/${topic}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
   if (response.status === 200) data = await response.json();
   return { status: response.status, data: data };
 }
@@ -70,4 +95,23 @@ export async function getPaymentMethodsByPeriod(
   return await fetchAsync(
     `${url}/api/v1/reports/paymentMethods?since=${since}&until=${until}`
   );
+}
+
+export async function editEntry(id, data) {
+  return await fetchAsyncPost(`${url}/api/v1/entries/${id}`, "PUT", data);
+}
+
+export async function addPayment(data) {
+  return await fetchAsyncPost(`${url}/api/v1/payments`, "POST", data);
+}
+
+export async function getTrafficLightData(passageWayId) {
+  return await fetchAsync(`${url}/api/v1/trafficlights?id=${passageWayId}`);
+}
+
+export async function turnOnTrafficLight(trafficLightId) {
+  return await fetchMqttPost("traffic_light", {
+    id: trafficLightId,
+    data: "1",
+  });
 }

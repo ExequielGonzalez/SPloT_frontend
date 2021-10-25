@@ -46,18 +46,18 @@ export async function getOccupationDetails() {
 
 export async function getPhotoByPlateNumber(plateNumber) {
   const vehicle = await fetchAsync(`${url}/api/v1/vehicles/${plateNumber}`);
-  // console.log(vehicle);
+  console.log(vehicle);
   if (vehicle.status !== 200) return vehicle;
   const entry = await fetchAsync(
-    `${url}/api/v1/entries/?vehicleId=${vehicle.data.id}`
+    `${url}/api/v1/entries/?exitTime=null&vehicleId=${vehicle.data.id}`
   );
   if (entry.status !== 200) return entry;
-  // console.log(entry[0]);
+  console.log(entry.data[0].id);
   const vehiclePhoto = await fetchAsync(
     `${url}/api/v1/vehiclePhotos?entryId=${entry.data[0].id}`
   );
   if (vehiclePhoto.status !== 200) return vehiclePhoto;
-  // console.log(vehiclePhoto);
+  console.log(vehiclePhoto);
 
   return await fetchAsync(
     `${url}/api/v1/vehiclePhotos/photo/${vehiclePhoto.data[0].id}`
@@ -106,7 +106,9 @@ export async function addPayment(data) {
 }
 
 export async function getTrafficLightData(passageWayId) {
-  return await fetchAsync(`${url}/api/v1/trafficlights?id=${passageWayId}`);
+  return await fetchAsync(
+    `${url}/api/v1/trafficlights?passagewayId=${passageWayId}`
+  );
 }
 
 export async function turnOnTrafficLight(trafficLightId) {

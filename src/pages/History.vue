@@ -1,24 +1,13 @@
 <template>
   <q-page class="q-pa-md">
-    <section class="home-header q-pa-lg">
-      <PlacesCounter title="Lugares generales" :places="parkPlaces" />
-      <PlacesCounter title="Lugares motos" :places="motorbikePlaces" />
-      <!-- <q-btn color="primary" icon="check" label="Añadir Ingreso" @click="newEntry" /> -->
-    </section>
     <SearchBar
       @result="filterPlates"
       @search-error="showEmptyTable"
       :plates="JSON.parse(JSON.stringify(this.activePlates))"
       ref="searchBarRef"
     />
-    <TablePlates
-      :plates="
-        JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
-          ? JSON.parse(JSON.stringify(this.filteredPlates))
-          : this.emptyTable
-          ? []
-          : JSON.parse(JSON.stringify(this.activePlates))
-      "
+    <TableHistory
+      :plates="getPlates"
       @view-photo="showPhoto"
       @add-manual-entry="addManualEntry"
       @delete-user="deleteEntry"
@@ -39,9 +28,8 @@ import { defineComponent } from "vue";
 // import * as Constants from "src/constants";
 import { useQuasar } from "quasar";
 
-import TablePlates from "src/components/TablePlates.vue";
+import TableHistory from "src/components/TableHistory.vue";
 import SearchBar from "src/components/SearchBar.vue";
-import PlacesCounter from "src/components/PlacesCounter.vue";
 import ImageViewer from "src/components/ImageViewer.vue";
 import NotificationOut from "src/components/NotificationOut.vue";
 import PaymentDialog from "src/components/PaymentDialog.vue";
@@ -60,15 +48,16 @@ import {
   editEntry,
   addPayment,
   getTrafficLightData,
-  turnOnTrafficLight
+  turnOnTrafficLight,
+  getHistory,
+  getPhotoByEntryIdHistory
 } from "src/utils/http-handler";
 
 export default defineComponent({
   name: "Home",
   components: {
-    TablePlates,
+    TableHistory,
     SearchBar,
-    PlacesCounter,
     ImageViewer,
     NotificationOut,
     PaymentDialog
@@ -104,12 +93,26 @@ export default defineComponent({
     this.filteredPlates = Object.values(this.plates);
     this.newMessage();
   },
+  computed: {
+    getPlates() {
+      return JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
+        ? JSON.parse(JSON.stringify(this.filteredPlates))
+        : this.emptyTable
+        ? []
+        : JSON.parse(JSON.stringify(this.activePlates));
+    }
+  },
   methods: {
+    async getHistoryData() {
+      const history = await getHistory();
+      console.log(history);
+      return history;
+    },
     async newMessage() {
       let response;
       let plates = {};
       let occupation = {};
-      response = await getActivePlates();
+      response = await this.getHistoryData();
       if (response.status === 200) plates = response.data;
       this.activePlates = plates;
       // console.log(JSON.parse(JSON.stringify(this.activePlates)));
@@ -133,21 +136,17 @@ export default defineComponent({
       });
     },
     filterPlates(result) {
-      this.emptyTable = false;
-      // console.log(result);
+      this.emptyTable = false;      
       this.filteredPlates = JSON.parse(JSON.stringify(result));
-      // console.log(
-      //   JSON.parse(JSON.stringify(this.filteredPlates)),
-      //   JSON.parse(JSON.stringify(this.filteredPlates)).length !== 0
-      // );
+
     },
     showEmptyTable() {
       this.emptyTable = true;
     },
-    async showPhoto(plateNumber) {
-      console.log(plateNumber);
+    async showPhoto(entryId) {
+      console.log(entryId);
       let photo = "";
-      let response = await getPhotoByPlateNumber(plateNumber);
+      let response = await getPhotoByEntryIdHistory(entryId);
       if (response.status === 200) photo = response.data;
       // this.$refs.imageViewerRef.setImage(photo);
       this.$refs.imageViewerRef.showModal(photo);

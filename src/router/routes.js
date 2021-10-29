@@ -5,6 +5,7 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/Home.vue") },
       { path: "estadisticas", component: () => import("pages/Stats.vue") },
+      { path: "historial", component: () => import("pages/History.vue") },
     ],
   },
   // {
@@ -16,6 +17,11 @@ const routes = [
   //   path: "/estadisticas",
   //   name: "Stats",
   //   component: () => import("pages/Stats.vue"),
+  // },
+  // {
+  //   path: "/historial",
+  //   name: "History",
+  //   component: () => import("pages/History.vue"),
   // },
 
   // Always leave this as last one,

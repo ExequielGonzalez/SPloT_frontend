@@ -47,7 +47,7 @@ export async function getOccupationDetails() {
 export async function getPhotoByPlateNumber(plateNumber) {
   const vehicle = await fetchAsync(`${url}/api/v1/vehicles/${plateNumber}`);
   console.log(vehicle);
-  if (vehicle.status !== 200) return vehicle;
+  if (vehicle.cstatus !== 200) return vehicle;
   const entry = await fetchAsync(
     `${url}/api/v1/entries/?exitTime=null&vehicleId=${vehicle.data.id}`
   );
@@ -68,7 +68,28 @@ export async function deleteEntry(id) {
   return await fetchAsync(`${url}/api/v1/entries/${id}`, "DELETE");
 }
 
-//stats Page
+export async function editEntry(id, data) {
+  return await fetchAsyncPost(`${url}/api/v1/entries/${id}`, "PUT", data);
+}
+
+export async function addPayment(data) {
+  return await fetchAsyncPost(`${url}/api/v1/payments`, "POST", data);
+}
+
+export async function getTrafficLightData(passageWayId) {
+  return await fetchAsync(
+    `${url}/api/v1/trafficlights?passagewayId=${passageWayId}`
+  );
+}
+
+export async function turnOnTrafficLight(trafficLightId) {
+  return await fetchMqttPost("traffic_light", {
+    id: trafficLightId,
+    data: "1",
+  });
+}
+
+//!stats Page
 
 export async function getMoneyEarnByPeriod(
   since = 1630805031,
@@ -97,23 +118,20 @@ export async function getPaymentMethodsByPeriod(
   );
 }
 
-export async function editEntry(id, data) {
-  return await fetchAsyncPost(`${url}/api/v1/entries/${id}`, "PUT", data);
+//!history page
+export async function getHistory() {
+  return await fetchAsync(`${url}/api/v1/history?rowsPerPage=100&page=1`);
 }
 
-export async function addPayment(data) {
-  return await fetchAsyncPost(`${url}/api/v1/payments`, "POST", data);
-}
+export async function getPhotoByEntryIdHistory(entryId) {
 
-export async function getTrafficLightData(passageWayId) {
-  return await fetchAsync(
-    `${url}/api/v1/trafficlights?passagewayId=${passageWayId}`
+  const vehiclePhoto = await fetchAsync(
+    `${url}/api/v1/vehiclePhotos?entryId=${entryId}`
   );
-}
+  if (vehiclePhoto.status !== 200) return vehiclePhoto;
+  console.log(vehiclePhoto);
 
-export async function turnOnTrafficLight(trafficLightId) {
-  return await fetchMqttPost("traffic_light", {
-    id: trafficLightId,
-    data: "1",
-  });
+  return await fetchAsync(
+    `${url}/api/v1/vehiclePhotos/photo/${vehiclePhoto.data[0].id}`
+  );
 }

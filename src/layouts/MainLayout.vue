@@ -43,23 +43,23 @@ const linksList = [
   {
     title: "Historial",
     icon: "history",
-    link: "/history"
-  },
-  {
-    title: "Cámaras",
-    icon: "videocam",
-    link: "/camera"
-  },
-  {
-    title: "Configuración",
-    icon: "settings",
-    link: "/configuration"
-  },
-  {
-    title: "Sistema",
-    icon: "info",
-    link: "/system"
+    link: "/historial"
   }
+  // {
+  //   title: "Cámaras",
+  //   icon: "videocam",
+  //   link: "/camera"
+  // },
+  // {
+  //   title: "Configuración",
+  //   icon: "settings",
+  //   link: "/configuration"
+  // },
+  // {
+  //   title: "Sistema",
+  //   icon: "info",
+  //   link: "/system"
+  // }
   // {
   //   title: "Gestión de cuentas",
   //   icon: "manage_accounts",

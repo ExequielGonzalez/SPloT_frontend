@@ -50,7 +50,7 @@ import {
   useSocketIo,
   webSocketNewEntry,
   webSocketAlarms,
-  webSocketPayment
+  webSocketPayment,
 } from "src/service/socket.js";
 import {
   getActivePlates,
@@ -60,7 +60,7 @@ import {
   editEntry,
   addPayment,
   getTrafficLightData,
-  turnOnTrafficLight
+  turnOnTrafficLight,
 } from "src/utils/http-handler";
 
 export default defineComponent({
@@ -71,7 +71,7 @@ export default defineComponent({
     PlacesCounter,
     ImageViewer,
     NotificationOut,
-    PaymentDialog
+    PaymentDialog,
   },
 
   setup() {
@@ -83,17 +83,17 @@ export default defineComponent({
       parkPlaces: {
         total: 0,
         free: 0,
-        busy: 0
+        busy: 0,
       },
       motorbikePlaces: {
         total: 0,
         free: 0,
-        busy: 0
+        busy: 0,
       },
       plates: {},
       activePlates: [],
       filteredPlates: [],
-      emptyTable: false
+      emptyTable: false,
     };
   },
   mounted() {
@@ -129,7 +129,7 @@ export default defineComponent({
       this.$q.notify({
         message: alert.title,
         caption: alert.description,
-        color: color[alert.type]
+        color: color[alert.type],
       });
     },
     filterPlates(result) {
@@ -150,6 +150,7 @@ export default defineComponent({
       let response = await getPhotoByPlateNumber(plateNumber);
       if (response.status === 200) photo = response.data;
       // this.$refs.imageViewerRef.setImage(photo);
+      console.log(photo);
       this.$refs.imageViewerRef.showModal(photo);
     },
     async deleteEntry(id) {
@@ -159,11 +160,11 @@ export default defineComponent({
           message: `¿Esta seguro que desea eliminar este ingreso?`,
           ok: {
             color: "negative",
-            label: "eliminar"
+            label: "eliminar",
           },
           cancel: {
-            color: "accent"
-          }
+            color: "accent",
+          },
         })
         .onOk(async () => {
           console.log("eliminando la entry: ", id);
@@ -175,13 +176,13 @@ export default defineComponent({
             this.$q.notify({
               progress: true,
               message: "Se eliminó el ingreso correctamente",
-              color: "accent"
+              color: "accent",
             });
           } else {
             this.$q.notify({
               progress: true,
               message: "No se ha podido eliminar el ingreso seleccionado",
-              color: "negative"
+              color: "negative",
             });
           }
         });
@@ -211,14 +212,14 @@ export default defineComponent({
       console.log("time to save the payment: ", data);
       let response = await editEntry(data.entryId, {
         exitTime: data.exitTime,
-        computePayment: false
+        computePayment: false,
       });
       if (response.status === 200) {
         console.log("entry edited succesfully: ", response);
         let paymentCreated = await addPayment({
           amount: data.cost,
           method: data.method,
-          entryId: data.entryId
+          entryId: data.entryId,
         });
 
         console.log("payment created succesfully: ", paymentCreated);
@@ -234,8 +235,8 @@ export default defineComponent({
     },
     async addManualEntry() {
       turnOnTrafficLight("1");
-    }
-  }
+    },
+  },
 });
 </script>
 

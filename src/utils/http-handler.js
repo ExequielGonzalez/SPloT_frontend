@@ -47,17 +47,17 @@ export async function getOccupationDetails() {
 export async function getPhotoByPlateNumber(plateNumber) {
   const vehicle = await fetchAsync(`${url}/api/v1/vehicles/${plateNumber}`);
   console.log(vehicle);
-  if (vehicle.cstatus !== 200) return vehicle;
+  if (vehicle.status !== 200) return vehicle;
   const entry = await fetchAsync(
     `${url}/api/v1/entries/?exitTime=null&vehicleId=${vehicle.data.id}`
   );
   if (entry.status !== 200) return entry;
-  console.log(entry.data[0].id);
+  //console.log(entry.data[0].id);
   const vehiclePhoto = await fetchAsync(
     `${url}/api/v1/vehiclePhotos?entryId=${entry.data[0].id}`
   );
   if (vehiclePhoto.status !== 200) return vehiclePhoto;
-  console.log(vehiclePhoto);
+  //console.log(vehiclePhoto);
 
   return await fetchAsync(
     `${url}/api/v1/vehiclePhotos/photo/${vehiclePhoto.data[0].id}`
@@ -124,7 +124,6 @@ export async function getHistory() {
 }
 
 export async function getPhotoByEntryIdHistory(entryId) {
-
   const vehiclePhoto = await fetchAsync(
     `${url}/api/v1/vehiclePhotos?entryId=${entryId}`
   );

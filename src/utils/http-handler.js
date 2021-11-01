@@ -1,5 +1,5 @@
-const url = "http://localhost:5000";
-const url_mqtt_api = "http://localhost:3001";
+const url = `http://${window.location.hostname}:5000`;
+const url_mqtt_api = `http://${window.location.hostname}:3001`;
 
 async function fetchAsync(url, verb = "GET") {
   let data = {};

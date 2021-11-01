@@ -1,7 +1,7 @@
 import openSocket from "socket.io-client";
 
 export function useSocketIo(port) {
-  return openSocket(`http://localhost:${port}`);
+  return openSocket(`http://${window.location.hostname}:${port}`);
 }
 
 export function webSocketNewEntry(socket, callback) {
